@@ -27,8 +27,9 @@ Powered by **Retrieval-Augmented Generation (RAG)**, you can now search semantic
 - Analyzes content using OpenAI API, Ollama, and other compatible backends
 - Assigns title, tags, document type, and correspondent
 - Built-in support for:
+  - **OpenAI** (GPT-5.4, GPT-5.3, GPT-5 Mini, GPT-4.1, GPT-4.1 Mini/Nano, GPT-4o/4o-mini, GPT-4 Turbo, GPT-3.5 Turbo)
+  - **OpenAI Reasoning** (o4-mini, o3, o3-pro, o3-mini, o1, o1-mini — automatic parameter handling)
   - Ollama (Mistral, Llama, Phi-3, Gemma-2)
-  - OpenAI
   - DeepSeek.ai
   - OpenRouter.ai
   - Perplexity.ai
@@ -37,7 +38,7 @@ Powered by **Retrieval-Augmented Generation (RAG)**, you can now search semantic
   - VLLM
   - Fastchat
   - Gemini (Google)
-  - ...and more!
+  - ...and any OpenAI-compatible API!
 
 ### 🧠 RAG-Based AI Chat
 - Natural language document search and Q&A
@@ -90,11 +91,14 @@ npm run test
 
 ## 🧭 Roadmap Highlights
 
-- ✅ Multi-AI model support
+- ✅ Multi-AI model support (GPT-5, GPT-4.1, o-series reasoning models)
+- ✅ Dynamic context window sizing per model (16k to 1M tokens)
+- ✅ OpenAI JSON mode for reliable structured output
 - ✅ Multilingual document analysis
 - ✅ Tag rules and filters
 - ✅ Integrated document chat with RAG
 - ✅ Responsive web interface
+- ✅ Security hardened (Helmet.js, rate limiting, secure session secrets)
 
 ---
 
