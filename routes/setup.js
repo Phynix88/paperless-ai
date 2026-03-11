@@ -18,7 +18,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 const { authenticateJWT, isAuthenticated } = require('./auth.js');
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || require('crypto').randomBytes(64).toString('hex');
 const customService = require('../services/customService.js');
 const config = require('../config/config.js');
 require('dotenv').config({ path: '../data/.env' });
@@ -1565,13 +1565,9 @@ async function processDocument(doc, existingTags, existingCorrespondentList, exi
     paperlessService.getDocument(doc.id)
   ]);
 
-  if (!content || !content.length >= 10) {
+  if (!content || content.length < 10) {
     console.log(`[DEBUG] Document ${doc.id} has no content, skipping analysis`);
     return null;
-  }
-
-  if (content.length > 50000) {
-    content = content.substring(0, 50000);
   }
 
   // Prepare options for AI service

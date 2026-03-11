@@ -1,8 +1,9 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
-// JWT secret key - should be moved to environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+// JWT secret key - uses env variable or generates a secure random fallback
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex');
 
 // JWT middleware to verify token
 const authenticateJWT = (req, res, next) => {
