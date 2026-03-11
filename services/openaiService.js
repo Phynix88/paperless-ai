@@ -19,6 +19,30 @@ function isReasoningModel(model) {
   return REASONING_MODELS.some(rm => model === rm || model.startsWith(rm + '-'));
 }
 
+const MODEL_CONTEXT_SIZES = {
+  'gpt-3.5-turbo': 16385,
+  'gpt-3.5-turbo-0125': 16385,
+  'gpt-4-turbo': 128000,
+  'gpt-4o': 128000,
+  'gpt-4o-mini': 128000,
+  'gpt-4.1': 1000000,
+  'gpt-4.1-mini': 1000000,
+  'gpt-4.1-nano': 1000000,
+  'gpt-5-mini': 256000,
+  'gpt-5.3': 512000,
+  'gpt-5.4': 512000,
+  'o1': 200000,
+  'o1-mini': 128000,
+  'o3-mini': 200000,
+  'o3': 200000,
+  'o3-pro': 200000,
+  'o4-mini': 200000,
+};
+
+function getModelContextSize(model) {
+  return MODEL_CONTEXT_SIZES[model] || Number(config.tokenLimit) || 128000;
+}
+
 class OpenAIService {
   constructor() {
     this.client = null;
@@ -164,7 +188,7 @@ class OpenAIService {
         model
       );
 
-      const maxTokens = Number(config.tokenLimit);
+      const maxTokens = getModelContextSize(model);
       const reservedTokens = totalPromptTokens + Number(config.responseTokens);
       const availableTokens = maxTokens - reservedTokens;
 
@@ -195,6 +219,7 @@ class OpenAIService {
           }
         ],
         ...(!isReasoningModel(model) && { temperature: 0.3 }),
+        ...(!isReasoningModel(model) && { response_format: { type: "json_object" } }),
       });
 
       if (!response?.choices?.[0]?.message?.content) {
@@ -296,13 +321,13 @@ class OpenAIService {
       );
 
       // Calculate available tokens
-      const maxTokens = Number(config.tokenLimit);
+      const model = process.env.OPENAI_MODEL;
+      const maxTokens = getModelContextSize(model);
       const reservedTokens = totalPromptTokens + Number(config.responseTokens); // Reserve for response
       const availableTokens = maxTokens - reservedTokens;
 
       // Truncate content if necessary
       const truncatedContent = await truncateToTokenLimit(content, availableTokens);
-      const model = process.env.OPENAI_MODEL;
       // Make API request
       const response = await this.client.chat.completions.create({
         model: model,
@@ -317,6 +342,7 @@ class OpenAIService {
           }
         ],
         ...(!isReasoningModel(model) && { temperature: 0.3 }),
+        ...(!isReasoningModel(model) && { response_format: { type: "json_object" } }),
       });
 
       // Handle response
