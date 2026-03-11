@@ -1,6 +1,7 @@
 services:
   paperless-ai:
-    image: clusterzx/paperless-ai
+    build: .
+    image: paperless-ai-custom
     container_name: paperless-ai
     network_mode: bridge
     restart: unless-stopped

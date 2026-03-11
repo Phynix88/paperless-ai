@@ -12,6 +12,13 @@ const path = require('path');
 const { model } = require('./ollamaService');
 const RestrictionPromptService = require('./restrictionPromptService');
 
+// o-series reasoning models don't support temperature, top_p, etc.
+const REASONING_MODELS = ['o1', 'o1-mini', 'o3-mini', 'o3', 'o3-pro', 'o4-mini'];
+
+function isReasoningModel(model) {
+  return REASONING_MODELS.some(rm => model === rm || model.startsWith(rm + '-'));
+}
+
 class OpenAIService {
   constructor() {
     this.client = null;
@@ -187,7 +194,7 @@ class OpenAIService {
             content: truncatedContent
           }
         ],
-        ...(model !== 'o3-mini' && { temperature: 0.3 }),
+        ...(!isReasoningModel(model) && { temperature: 0.3 }),
       });
 
       if (!response?.choices?.[0]?.message?.content) {
@@ -311,7 +318,7 @@ class OpenAIService {
             content: truncatedContent
           }
         ],
-        ...(model !== 'o3-mini' && { temperature: 0.3 }),
+        ...(!isReasoningModel(model) && { temperature: 0.3 }),
       });
 
       // Handle response
@@ -384,7 +391,7 @@ class OpenAIService {
             content: prompt
           }
         ],
-        temperature: 0.7
+        ...(!isReasoningModel(model) && { temperature: 0.7 }),
       });
 
       if (!response?.choices?.[0]?.message?.content) {
@@ -406,15 +413,16 @@ class OpenAIService {
       if (!this.client) {
         throw new Error('OpenAI client not initialized - missing API key');
       }
+      const statusModel = process.env.OPENAI_MODEL;
       const response = await this.client.chat.completions.create({
-        model: process.env.OPENAI_MODEL,
+        model: statusModel,
         messages: [
           {
             role: "user",
             content: "Test"
           }
         ],
-        temperature: 0.7
+        ...(!isReasoningModel(statusModel) && { temperature: 0.7 }),
       });
       if (!response?.choices?.[0]?.message?.content) {
         throw new Error('Invalid API response structure');
