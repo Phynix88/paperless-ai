@@ -206,10 +206,6 @@ async function processDocument(doc, existingTags, existingCorrespondentList, exi
     return null;
   }
 
-  if (content.length > 50000) {
-    content = content.substring(0, 50000);
-  }
-
   const aiService = AIServiceFactory.getService();
   const analysis = await aiService.analyzeDocument(content, existingTags, existingCorrespondentList, existingDocumentTypesList, doc.id);
   console.log('Repsonse from AI service:', analysis);

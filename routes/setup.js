@@ -1570,10 +1570,6 @@ async function processDocument(doc, existingTags, existingCorrespondentList, exi
     return null;
   }
 
-  if (content.length > 50000) {
-    content = content.substring(0, 50000);
-  }
-
   // Prepare options for AI service
   const options = {
     restrictToExistingTags: config.restrictToExistingTags === 'yes',
