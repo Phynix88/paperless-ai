@@ -38,12 +38,12 @@ const txtLogger = new Logger({
 const app = express();
 let runningTask = false;
 
-// Security middleware
-app.use(helmet());
+// Security middleware — disable CSP so inline styles/scripts in EJS templates work
+app.use(helmet({ contentSecurityPolicy: false }));
 
 // Rate limiters
-const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, message: 'Too many login attempts' });
-const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, message: 'Too many login attempts, please try again later.' });
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 
 app.use('/login', loginLimiter);
 app.use('/api/', apiLimiter);
