@@ -45,6 +45,7 @@ RUN apt-get update && \
     python3 \
     python3-venv \
     curl && \
+    ln -sf /usr/bin/python3 /usr/bin/python && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
